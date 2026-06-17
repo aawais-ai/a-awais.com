@@ -1,3 +1,10 @@
 .DS_Store
 pic.jpg
 DEPLOY.md
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+.env*
+!.env.example
