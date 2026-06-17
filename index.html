@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Awais Ahmed</title>
+<meta name="description" content="Awais Ahmed — AI Engineer working on LLMs, RAG, and LLMOps. Based in Ingolstadt, Germany." />
+<meta name="author" content="Awais Ahmed" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Awais Ahmed" />
+<meta property="og:description" content="AI Engineer — LLMs, RAG, and LLMOps. From prototype to production." />
+<meta property="og:image" content="https://a-awais.com/assets/profile.jpg" />
+<meta property="og:url" content="https://a-awais.com" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>AA</text></svg>" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+<style>
+  :root {
+    --bg: #fbfbf9;
+    --fg: #1a1a18;
+    --muted: #6b6b66;
+    --rule: #e3e2dc;
+    --accent: #9a4b2f;
+    --maxw: 720px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #15140f;
+      --fg: #e9e7e0;
+      --muted: #9c998f;
+      --rule: #322f27;
+      --accent: #d98a63;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 16.5px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 80px 24px 96px; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; text-underline-offset: 2px; }
+
+  /* ---------- Header ---------- */
+  .hero { display: flex; gap: 26px; align-items: center; margin-bottom: 30px; }
+  .avatar {
+    width: 116px; height: 116px; border-radius: 50%;
+    object-fit: cover; flex-shrink: 0;
+    border: 1px solid var(--rule);
+  }
+  h1 {
+    font-family: "Newsreader", Georgia, serif;
+    font-weight: 500; font-size: 38px; letter-spacing: -0.01em;
+    margin: 0 0 4px; line-height: 1.1;
+  }
+  .tagline {
+    font-family: "Newsreader", Georgia, serif; font-style: italic;
+    font-size: 18px; color: var(--muted); margin: 0;
+  }
+  .location { font-size: 13.5px; color: var(--muted); margin-top: 8px; }
+  .links { display: flex; flex-wrap: wrap; gap: 16px; margin: 14px 0 0; font-size: 14.5px; }
+  .links a { color: var(--fg); border-bottom: 1px solid var(--rule); padding-bottom: 1px; }
+  .links a:hover { color: var(--accent); border-color: var(--accent); text-decoration: none; }
+
+  .bio { font-size: 16.5px; margin: 0 0 8px; }
+
+  hr { border: 0; border-top: 1px solid var(--rule); margin: 40px 0; }
+
+  h2 {
+    font-family: "Inter", sans-serif; font-size: 12.5px; font-weight: 600;
+    letter-spacing: 0.13em; text-transform: uppercase; color: var(--muted);
+    margin: 0 0 26px;
+  }
+
+  /* ---------- Timeline ---------- */
+  .timeline { position: relative; margin-left: 132px; border-left: 1px solid var(--rule); }
+  .node { position: relative; padding: 0 0 36px 60px; }
+  .node:last-child { padding-bottom: 0; }
+  .node .date {
+    position: absolute; left: -132px; top: 5px; width: 94px; text-align: right;
+    white-space: nowrap; font-size: 12px; color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .logo {
+    position: absolute; left: -26px; top: 0; width: 50px; height: 50px;
+    border-radius: 11px; overflow: hidden; display: flex; align-items: center; justify-content: center;
+    background: var(--lc, #555); color: #fff; box-shadow: 0 0 0 4px var(--bg);
+    font-family: "Newsreader", Georgia, serif; font-size: 24px; font-weight: 500;
+  }
+  .logo.has-img { background: #fff; }
+  .logo-img {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: contain; padding: 7px; background: #fff; opacity: 0; transition: opacity .2s;
+  }
+  .node h3 {
+    font-family: "Newsreader", Georgia, serif; font-weight: 500; font-size: 20px;
+    margin: 1px 0 2px;
+  }
+  .node .org-meta { font-size: 13px; color: var(--muted); margin: 0 0 8px; }
+  .node p { margin: 0 0 10px; }
+  .node p:last-child { margin-bottom: 0; }
+  .thesis {
+    margin-top: 12px; padding: 12px 16px; border-left: 2px solid var(--rule);
+    font-size: 14.5px; color: var(--muted);
+  }
+  .thesis b { color: var(--fg); font-weight: 500; }
+
+  /* ---------- Projects ---------- */
+  .entry { margin-bottom: 26px; }
+  .entry:last-child { margin-bottom: 0; }
+  .entry-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+  .entry-title { font-family: "Newsreader", Georgia, serif; font-size: 20px; font-weight: 500; margin: 0; }
+  .entry-title a { color: var(--fg); }
+  .entry-title a:hover { color: var(--accent); text-decoration: none; }
+  .entry-meta { font-size: 12.5px; color: var(--muted); white-space: nowrap; }
+  .entry-desc { margin: 5px 0 0; }
+  .tags { margin-top: 8px; font-size: 12.5px; color: var(--muted); }
+  .tags span::after { content: " · "; }
+  .tags span:last-child::after { content: ""; }
+
+  /* ---------- Certifications ---------- */
+  .cert { display: flex; gap: 10px; font-size: 15.5px; margin-bottom: 8px; }
+  .cert .yr { color: var(--muted); font-size: 13px; min-width: 38px; }
+
+  .muted { color: var(--muted); }
+  .soon { font-size: 14px; color: var(--muted); font-style: italic; }
+
+  footer {
+    margin-top: 52px; padding-top: 20px; border-top: 1px solid var(--rule);
+    font-size: 12.5px; color: var(--muted); display: flex; justify-content: space-between;
+    flex-wrap: wrap; gap: 8px;
+  }
+
+  @media (max-width: 560px) {
+    .wrap { padding: 52px 20px 72px; }
+    .hero { gap: 18px; }
+    .avatar { width: 88px; height: 88px; }
+    h1 { font-size: 31px; }
+    .timeline { margin-left: 0; border-left: 0; }
+    .node { padding: 0 0 30px 62px; }
+    .node .date { position: static; width: auto; text-align: left; display: block; margin-bottom: 4px; }
+    .logo { left: 0; box-shadow: none; }
+    .node { padding-top: 0; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+
+    <div class="hero">
+      <img class="avatar" src="/assets/profile.jpg" alt="Awais Ahmed" />
+      <div>
+        <h1>Awais Ahmed</h1>
+        <p class="tagline">AI Engineer — from prototype to production.</p>
+        <p class="location">Ingolstadt, Germany</p>
+        <nav class="links">
+          <a href="https://github.com/aawais-ai">GitHub</a>
+          <a href="https://www.linkedin.com/in/aawais-ai">LinkedIn</a>
+          <a href="mailto:awais@a-awais.com">Email</a>
+        </nav>
+      </div>
+    </div>
+
+    <p class="bio">
+      AI Engineer with 3+ years of experience taking Generative AI systems from prototype to
+      production — enterprise RAG platforms (~40% retrieval-accuracy gains), LLM fine-tuning
+      (QLoRA, 98% structured-output accuracy), and scalable FastAPI services on Terraform-managed
+      Azure/GCP infrastructure. Combines deep technical ownership with client-facing delivery:
+      pre-sales PoCs, demos, and solution architecture for enterprise customers. Google-certified
+      Professional Data Engineer, currently pursuing an M.Sc. in Artificial Intelligence;
+      experienced in GDPR- and EU AI Act-compliant deployments.
+    </p>
+
+    <hr />
+
+    <h2>Experience &amp; Education</h2>
+    <div class="timeline">
+
+      <div class="node">
+        <span class="date">2026 – Present</span>
+        <span class="logo" style="--lc:#13a3a3"><span class="mono">N</span><img class="logo-img" alt="NFON AG" data-srcs="https://logo.clearbit.com/nfon.com|https://www.google.com/s2/favicons?domain=nfon.com&amp;sz=128" /></span>
+        <h3>AI Engineer · NFON AG</h3>
+        <p class="org-meta">Remote, Germany</p>
+        <p>
+          Building LLM-powered conversational-intelligence features — call-transcription
+          analysis, summarization, and real-time agent assist — for a European cloud-communications
+          platform. I design RAG and agentic workflows over product and customer-interaction data
+          with GDPR- and EU AI Act-compliant handling, and ship the Python/FastAPI inference
+          microservices behind them with containerized CI/CD and automated quality evaluation.
+        </p>
+      </div>
+
+      <div class="node">
+        <span class="date">2026 – Present</span>
+        <span class="logo" style="--lc:#00467f"><span class="mono">T</span><img class="logo-img" alt="TH Ingolstadt" data-srcs="https://logo.clearbit.com/thi.de|https://www.google.com/s2/favicons?domain=thi.de&amp;sz=128" /></span>
+        <h3>M.Sc., Artificial Intelligence · TH Ingolstadt</h3>
+        <p class="org-meta">Alongside full-time work</p>
+        <p>Graduate study in AI, pursued part-time while working as an AI Engineer.</p>
+      </div>
+
+      <div class="node">
+        <span class="date">2023 – 2026</span>
+        <span class="logo" style="--lc:#0a3d62"><span class="mono">S</span><img class="logo-img" alt="SII Technologies" data-srcs="https://logo.clearbit.com/sii-group.com|https://www.google.com/s2/favicons?domain=sii-group.com&amp;sz=128" /></span>
+        <h3>Data &amp; AI Engineer · SII Technologies</h3>
+        <p class="org-meta">Ingolstadt, Germany</p>
+        <p>
+          Architected and deployed an enterprise RAG platform on Terraform-provisioned Azure
+          (FastAPI, Azure AI Search, Docker), lifting retrieval accuracy ~40% with a multi-stage
+          pipeline of dense vector search plus cross-encoder reranking; fine-tuned Llama-3-8B
+          (QLoRA/Unsloth) to 98% valid-JSON extraction and quantized to GGUF for cost-efficient
+          self-hosted inference. I also built the FastAPI backend of an automotive recommendation
+          engine (NLP query parsing, VIN detection, live data enrichment) through to a client-facing
+          demo, delivered a Jira ticket-analytics solution (.NET + Power BI) and Tableau HR
+          dashboards, and drove technical pre-sales — scoping requirements, building proof-of-concepts,
+          and presenting architectures that converted prospects into signed projects.
+        </p>
+      </div>
+
+      <div class="node">
+        <span class="date">2020 – 2022</span>
+        <span class="logo" style="--lc:#2b6cb0"><span class="mono">e</span><img class="logo-img" alt="e.solutions GmbH" data-srcs="https://logo.clearbit.com/esolutions.de|https://www.google.com/s2/favicons?domain=esolutions.de&amp;sz=128" /></span>
+        <h3>Software Integration Engineer · e.solutions GmbH</h3>
+        <p class="org-meta">Ingolstadt, Germany</p>
+        <p>
+          Developed Python automation and Jenkins CI pipelines for automotive software releases,
+          cutting manual integration effort by 50% and streamlining OEM release cycles and
+          Artifactory artifact management.
+        </p>
+      </div>
+
+      <div class="node">
+        <span class="date">2019 – 2023</span>
+        <span class="logo" style="--lc:#00467f"><span class="mono">T</span><img class="logo-img" alt="TH Ingolstadt" data-srcs="https://logo.clearbit.com/thi.de|https://www.google.com/s2/favicons?domain=thi.de&amp;sz=128" /></span>
+        <h3>B.Eng., Engineering &amp; Management · TH Ingolstadt</h3>
+        <p class="org-meta">Grade 1.5 (German scale, 1.0 = best) · Focus: Data Science, AI Decision Systems</p>
+        <div class="thesis">
+          <b>B.Eng. thesis · AIMotion Bavaria (Oct 2022 – Feb 2023)</b><br />
+          Applied machine learning and clustering (K-means, Fuzzy c-means, Affinity Propagation) to
+          large-scale unlabelled vehicle-trajectory data from the rounD dataset — recorded at three
+          German roundabouts — to identify functional driving patterns for smart-infrastructure and
+          automated traffic. Found that a vehicle's spatial properties strongly predict its
+          roundabout exit, and that velocity profiles cluster tightly by exit, making velocity a
+          reliable predictor of future behaviour.
+        </div>
+      </div>
+
+    </div>
+
+    <hr />
+
+    <h2>Projects</h2>
+
+    <div class="entry">
+      <div class="entry-head">
+        <p class="entry-title"><a href="https://github.com/aawais-ai">Enterprise RAG Platform</a></p>
+        <span class="entry-meta">2023–2026</span>
+      </div>
+      <p class="entry-desc">
+        Production retrieval-augmented-generation platform on Terraform-provisioned Azure. A
+        multi-stage pipeline — dense vector search over Azure AI Search followed by cross-encoder
+        reranking — lifted retrieval accuracy ~40% over a naive top-k baseline, served through
+        FastAPI microservices with GDPR-compliant data handling.
+      </p>
+      <p class="tags"><span>RAG</span><span>Azure AI Search</span><span>cross-encoder reranking</span><span>FastAPI</span><span>Terraform</span></p>
+    </div>
+
+    <div class="entry">
+      <div class="entry-head">
+        <p class="entry-title"><a href="https://github.com/aawais-ai/sales-research-agent">sales-research-agent</a></p>
+        <span class="entry-meta">2026</span>
+      </div>
+      <p class="entry-desc">
+        A provider-agnostic sales-research agent with a custom MCP server over a mock CRM. Give it a
+        target account and it researches firmographics, detects buying signals, finds the right
+        decision-maker, and produces a structured brief plus a personalized outreach draft — with a
+        code-enforced guardrail that every fact must trace back to a real tool result. Claude and
+        OpenAI implementations swap behind one protocol.
+      </p>
+      <p class="tags"><span>Python</span><span>MCP</span><span>Claude / OpenAI tool use</span><span>mypy --strict</span><span>95% coverage</span></p>
+    </div>
+
+    <div class="entry">
+      <div class="entry-head">
+        <p class="entry-title"><a href="https://github.com/aawais-ai/GithubRepoAssistant">GithubRepoAssistant</a></p>
+        <span class="entry-meta">2026</span>
+      </div>
+      <p class="entry-desc">
+        An LLM-powered assistant that answers natural-language questions about any public GitHub
+        repository. Built on Pydantic AI with ten focused tools over the GitHub REST API — repo
+        overview, issues, PRs, commits, contributors, README context, and a deterministic
+        repo-health snapshot — that the model chains automatically to answer questions like
+        "which open issues look stale?"
+      </p>
+      <p class="tags"><span>Python</span><span>Pydantic AI</span><span>GitHub API</span><span>async</span><span>tool use</span></p>
+    </div>
+
+    <hr />
+
+    <h2>Certifications</h2>
+    <div class="cert"><span class="yr">2025</span><span>Google Cloud — Professional Data Engineer</span></div>
+    <div class="cert"><span class="yr">2025</span><span>NVIDIA Certified Associate — Generative AI &amp; LLMs (NCA-GENL)</span></div>
+
+    <hr />
+
+    <h2>Writing</h2>
+    <p class="muted">Notes on LLM systems, retrieval, and putting models into production.</p>
+    <p class="soon">First post in progress.</p>
+
+    <footer>
+      <span>© 2026 Awais Ahmed</span>
+      <span>awais@a-awais.com</span>
+    </footer>
+  </div>
+
+  <script>
+    document.querySelectorAll('.logo-img').forEach(function (img) {
+      var srcs = (img.getAttribute('data-srcs') || '').split('|').filter(Boolean);
+      var i = 0;
+      function next() {
+        if (i >= srcs.length) { img.remove(); return; }
+        img.src = srcs[i++];
+      }
+      img.addEventListener('load', function () {
+        img.style.opacity = 1;
+        img.parentElement.classList.add('has-img');
+      });
+      img.addEventListener('error', next);
+      next();
+    });
+  </script>
+</body>
+</html>

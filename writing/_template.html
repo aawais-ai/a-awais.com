@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- DUPLICATE THIS FILE for each post. Rename to e.g. my-post-slug.html,
+     edit the <title>, the <h1>, the date, and the body. Then add a link to it
+     in the Writing section of /index.html. -->
+<title>Post title — Awais Ahmed</title>
+<meta name="description" content="One-line summary of the post." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{ --bg:#fbfbf9; --fg:#1a1a18; --muted:#6b6b66; --rule:#e7e6e1; --accent:#9a4b2f; --maxw:660px; }
+  @media (prefers-color-scheme: dark){ :root{ --bg:#15140f; --fg:#e9e7e0; --muted:#9c998f; --rule:#2c2a23; --accent:#d98a63; } }
+  *{ box-sizing:border-box; }
+  body{ margin:0; background:var(--bg); color:var(--fg);
+    font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    font-size:18px; line-height:1.7; -webkit-font-smoothing:antialiased; }
+  .wrap{ max-width:var(--maxw); margin:0 auto; padding:72px 24px 96px; }
+  a{ color:var(--accent); text-decoration:none; } a:hover{ text-decoration:underline; text-underline-offset:2px; }
+  .back{ font-size:14px; color:var(--muted); display:inline-block; margin-bottom:40px; }
+  h1{ font-family:"Newsreader",Georgia,serif; font-weight:500; font-size:34px; line-height:1.2; margin:0 0 8px; letter-spacing:-0.01em; }
+  .date{ font-size:14px; color:var(--muted); margin:0 0 40px; }
+  h2{ font-family:"Newsreader",Georgia,serif; font-weight:500; font-size:24px; margin:40px 0 12px; }
+  p{ margin:0 0 20px; }
+  blockquote{ margin:24px 0; padding-left:18px; border-left:2px solid var(--rule); color:var(--muted); font-style:italic; }
+  pre{ background:rgba(127,127,127,0.08); padding:16px; border-radius:6px; overflow:auto; font-size:14px; }
+  code{ font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:0.9em; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <a class="back" href="/">← Awais Ahmed</a>
+    <h1>Post title</h1>
+    <p class="date">Month 2026</p>
+
+    <p>Opening paragraph. Write the post here in plain HTML — one <code>&lt;p&gt;</code> per
+    paragraph, <code>&lt;h2&gt;</code> for section headings.</p>
+
+    <h2>A section</h2>
+    <p>More text.</p>
+  </div>
+</body>
+</html>
