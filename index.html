@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -14,324 +14,422 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>AA</text></svg>" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<script>
+  (function () {
+    var saved = null;
+    try { saved = localStorage.getItem('theme'); } catch (e) {}
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.setAttribute('data-theme', theme);
+  })();
+</script>
 
 <style>
-  :root {
-    --bg: #fbfbf9;
-    --fg: #1a1a18;
-    --muted: #6b6b66;
-    --rule: #e3e2dc;
-    --accent: #9a4b2f;
-    --maxw: 720px;
+  :root, [data-theme="dark"] {
+    --bg: #0a0a0a;
+    --bg-card: #141414;
+    --bg-hover: #1a1a1a;
+    --text: #e5e5e5;
+    --muted: #888888;
+    --dim: #555555;
+    --border: #222222;
   }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #15140f;
-      --fg: #e9e7e0;
-      --muted: #9c998f;
-      --rule: #322f27;
-      --accent: #d98a63;
-    }
+  [data-theme="light"] {
+    --bg: #fafafa;
+    --bg-card: #ffffff;
+    --bg-hover: #f2f2f2;
+    --text: #171717;
+    --muted: #666666;
+    --dim: #a0a0a0;
+    --border: #e4e4e4;
   }
-  * { box-sizing: border-box; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
   body {
-    margin: 0;
     background: var(--bg);
-    color: var(--fg);
-    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    font-size: 16.5px;
-    line-height: 1.65;
+    color: var(--text);
+    font-family: "Inter", system-ui, -apple-system, sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    transition: background .2s, color .2s;
   }
-  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 80px 24px 96px; }
-  a { color: var(--accent); text-decoration: none; }
-  a:hover { text-decoration: underline; text-underline-offset: 2px; }
+  .container { width: 100%; max-width: 48rem; margin: 0 auto; padding: 0 1.5rem; }
+  a { color: inherit; text-decoration: none; }
+  img { max-width: 100%; display: block; }
 
-  /* ---------- Header ---------- */
-  .hero { display: flex; gap: 26px; align-items: center; margin-bottom: 30px; }
-  .avatar {
-    width: 116px; height: 116px; border-radius: 50%;
-    object-fit: cover; flex-shrink: 0;
-    border: 1px solid var(--rule);
+  /* ---------- Nav ---------- */
+  nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding-top: 1.5rem; padding-bottom: 1.5rem;
   }
-  h1 {
-    font-family: "Newsreader", Georgia, serif;
-    font-weight: 500; font-size: 38px; letter-spacing: -0.01em;
-    margin: 0 0 4px; line-height: 1.1;
-  }
-  .tagline {
-    font-family: "Newsreader", Georgia, serif; font-style: italic;
-    font-size: 18px; color: var(--muted); margin: 0;
-  }
-  .location { font-size: 13.5px; color: var(--muted); margin-top: 8px; }
-  .links { display: flex; flex-wrap: wrap; gap: 16px; margin: 14px 0 0; font-size: 14.5px; }
-  .links a { color: var(--fg); border-bottom: 1px solid var(--rule); padding-bottom: 1px; }
-  .links a:hover { color: var(--accent); border-color: var(--accent); text-decoration: none; }
+  .nav-name { font-size: 1.05rem; font-weight: 600; letter-spacing: -0.02em; }
+  .nav-links { display: flex; align-items: center; gap: 1.15rem; font-size: .84rem; color: var(--muted); }
+  .nav-links a { display: inline-flex; align-items: center; gap: .35rem; transition: color .15s; }
+  .nav-links a:hover { color: var(--text); }
+  .nav-links svg { width: 13px; height: 13px; }
 
-  .bio { font-size: 16.5px; margin: 0 0 8px; }
+  /* theme toggle */
+  .theme-toggle {
+    background: none; border: 0; cursor: pointer; padding: 0; margin-left: .25rem;
+    display: inline-flex; align-items: center;
+  }
+  .toggle-track {
+    position: relative; width: 38px; height: 20px; border-radius: 999px;
+    background: var(--bg-hover); border: 1px solid var(--border);
+    display: inline-flex; align-items: center; justify-content: space-between;
+    padding: 0 4px; color: var(--muted);
+  }
+  .toggle-track svg { width: 10px; height: 10px; }
+  .toggle-thumb {
+    position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; border-radius: 50%;
+    background: var(--text); transition: transform .2s;
+  }
+  [data-theme="light"] .toggle-thumb { transform: translateX(18px); }
 
-  hr { border: 0; border-top: 1px solid var(--rule); margin: 40px 0; }
-
-  h2 {
-    font-family: "Inter", sans-serif; font-size: 12.5px; font-weight: 600;
-    letter-spacing: 0.13em; text-transform: uppercase; color: var(--muted);
-    margin: 0 0 26px;
+  /* ---------- Sections ---------- */
+  main { padding-bottom: 2rem; }
+  section { padding: 2.6rem 0; }
+  .section-label {
+    font-size: .75rem; font-weight: 500; text-transform: uppercase;
+    letter-spacing: .12em; color: var(--muted); margin-bottom: 1.4rem;
   }
 
-  /* ---------- Timeline ---------- */
-  .timeline { position: relative; margin-left: 132px; border-left: 1px solid var(--rule); }
-  .node { position: relative; padding: 0 0 36px 60px; }
-  .node:last-child { padding-bottom: 0; }
-  .node .date {
-    position: absolute; left: -132px; top: 5px; width: 94px; text-align: right;
-    white-space: nowrap; font-size: 12px; color: var(--muted);
-    font-variant-numeric: tabular-nums;
+  /* ---------- Hero ---------- */
+  .hero { display: flex; align-items: flex-start; gap: 2rem; padding: 3.2rem 0 2.2rem; }
+  .hero-text { flex: 1; min-width: 0; }
+  .hero h1 { font-size: 2.1rem; font-weight: 700; letter-spacing: -0.03em; margin-bottom: .9rem; }
+  .hero .lede { color: var(--muted); font-size: 1.02rem; line-height: 1.7; }
+  .hero .lede a { text-decoration: underline; text-underline-offset: 3px; transition: color .15s; }
+  .hero .lede a:hover { color: var(--text); }
+  .hero-photo { flex-shrink: 0; text-align: center; }
+  .hero-photo img { width: 10.5rem; border-radius: .6rem; }
+  .hero-photo p { font-size: .72rem; color: var(--dim); margin-top: .5rem; }
+  .btn {
+    display: inline-block; margin-top: 1.4rem; padding: .5rem 1.15rem;
+    font-size: .84rem; border: 1px solid var(--border); border-radius: .4rem;
+    transition: background .15s;
   }
-  .logo {
-    position: absolute; left: -26px; top: 0; width: 50px; height: 50px;
-    border-radius: 11px; overflow: hidden; display: flex; align-items: center; justify-content: center;
-    background: var(--lc, #555); color: #fff; box-shadow: 0 0 0 4px var(--bg);
-    font-family: "Newsreader", Georgia, serif; font-size: 24px; font-weight: 500;
+  .btn:hover { background: var(--bg-hover); }
+
+  /* ---------- Cards ---------- */
+  .card {
+    display: block; border: 1px solid var(--border); background: var(--bg-card);
+    border-radius: .55rem; padding: 1.1rem 1.25rem; transition: background .15s;
   }
-  .logo.has-img { background: #fff; }
-  .logo-img {
+  a.card:hover, .card.hoverable:hover { background: var(--bg-hover); }
+  .stack { display: flex; flex-direction: column; gap: .85rem; }
+
+  /* experience cards */
+  .xp-head { display: flex; align-items: center; gap: .9rem; }
+  .xp-logo {
+    position: relative; flex-shrink: 0; width: 40px; height: 40px; border-radius: .5rem;
+    overflow: hidden; display: flex; align-items: center; justify-content: center;
+    background: var(--lc, #444); color: #fff; font-weight: 600; font-size: 1.05rem;
+  }
+  .xp-logo img {
     position: absolute; inset: 0; width: 100%; height: 100%;
-    object-fit: contain; padding: 7px; background: #fff; opacity: 0; transition: opacity .2s;
+    object-fit: contain; padding: 5px; background: #fff; opacity: 0; transition: opacity .2s;
   }
-  .node h3 {
-    font-family: "Newsreader", Georgia, serif; font-weight: 500; font-size: 20px;
-    margin: 1px 0 2px;
-  }
-  .node .org-meta { font-size: 13px; color: var(--muted); margin: 0 0 8px; }
-  .node p { margin: 0 0 10px; }
-  .node p:last-child { margin-bottom: 0; }
+  .xp-title { font-size: .95rem; font-weight: 600; letter-spacing: -0.01em; }
+  .xp-meta { font-size: .78rem; color: var(--muted); margin-top: .1rem; }
+  .xp-meta span::after { content: " · "; color: var(--dim); }
+  .xp-meta span:last-child::after { content: ""; }
+  .card > p { font-size: .875rem; color: var(--muted); line-height: 1.65; margin-top: .8rem; }
+  .card > p b { color: var(--text); font-weight: 500; }
   .thesis {
-    margin-top: 12px; padding: 12px 16px; border-left: 2px solid var(--rule);
-    font-size: 14.5px; color: var(--muted);
+    margin-top: .8rem; padding: .7rem .9rem; border-left: 2px solid var(--border);
+    font-size: .82rem; color: var(--muted); line-height: 1.6;
   }
-  .thesis b { color: var(--fg); font-weight: 500; }
+  .thesis b { color: var(--text); font-weight: 500; }
 
-  /* ---------- Projects ---------- */
-  .entry { margin-bottom: 26px; }
-  .entry:last-child { margin-bottom: 0; }
-  .entry-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
-  .entry-title { font-family: "Newsreader", Georgia, serif; font-size: 20px; font-weight: 500; margin: 0; }
-  .entry-title a { color: var(--fg); }
-  .entry-title a:hover { color: var(--accent); text-decoration: none; }
-  .entry-meta { font-size: 12.5px; color: var(--muted); white-space: nowrap; }
-  .entry-desc { margin: 5px 0 0; }
-  .tags { margin-top: 8px; font-size: 12.5px; color: var(--muted); }
-  .tags span::after { content: " · "; }
-  .tags span:last-child::after { content: ""; }
+  /* ---------- Projects grid ---------- */
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: .9rem; }
+  .proj h3 { font-size: .92rem; font-weight: 600; letter-spacing: -0.01em; display: flex; align-items: baseline; gap: .4rem; }
+  .proj h3 .arrow { font-size: .75rem; color: var(--dim); }
+  .proj .when { font-size: .72rem; color: var(--dim); margin-top: .1rem; }
+  .proj p { font-size: .84rem; color: var(--muted); line-height: 1.6; margin-top: .55rem; }
+  .proj .tags { margin-top: .7rem; font-size: .72rem; color: var(--dim); }
+  .proj .tags span::after { content: " · "; }
+  .proj .tags span:last-child::after { content: ""; }
 
-  /* ---------- Certifications ---------- */
-  .cert { display: flex; gap: 10px; font-size: 15.5px; margin-bottom: 8px; }
-  .cert .yr { color: var(--muted); font-size: 13px; min-width: 38px; }
+  /* ---------- Simple lists ---------- */
+  .line-list { display: flex; flex-direction: column; gap: .65rem; }
+  .line-item { display: flex; align-items: baseline; gap: .6rem; font-size: .9rem; }
+  .line-item .yr { color: var(--dim); font-size: .78rem; font-variant-numeric: tabular-nums; min-width: 2.6rem; }
+  .line-item .soon { color: var(--dim); font-style: italic; font-size: .84rem; }
+  a.line-item { color: var(--muted); transition: color .15s; }
+  a.line-item:hover { color: var(--text); }
+  a.line-item .ext { color: var(--dim); font-size: .75rem; }
 
-  .muted { color: var(--muted); }
-  .soon { font-size: 14px; color: var(--muted); font-style: italic; }
+  /* ---------- Contact ---------- */
+  .contact-row { display: flex; flex-wrap: wrap; gap: .9rem; }
+  .contact-row .card { display: inline-flex; align-items: center; gap: .55rem; padding: .6rem 1rem; font-size: .86rem; }
+  .contact-row svg { width: 15px; height: 15px; color: var(--muted); }
 
+  /* ---------- Footer ---------- */
   footer {
-    margin-top: 52px; padding-top: 20px; border-top: 1px solid var(--rule);
-    font-size: 12.5px; color: var(--muted); display: flex; justify-content: space-between;
-    flex-wrap: wrap; gap: 8px;
+    border-top: 1px solid var(--border);
+    padding: 2rem 0 2.5rem; font-size: .8rem; color: var(--muted);
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .5rem;
   }
+  footer a { transition: color .15s; }
+  footer a:hover { color: var(--text); }
 
-  @media (max-width: 560px) {
-    .wrap { padding: 52px 20px 72px; }
-    .hero { gap: 18px; }
-    .avatar { width: 88px; height: 88px; }
-    h1 { font-size: 31px; }
-    .timeline { margin-left: 0; border-left: 0; }
-    .node { padding: 0 0 30px 62px; }
-    .node .date { position: static; width: auto; text-align: left; display: block; margin-bottom: 4px; }
-    .logo { left: 0; box-shadow: none; }
-    .node { padding-top: 0; }
+  @media (max-width: 640px) {
+    .hero { flex-direction: column-reverse; align-items: center; text-align: center; padding-top: 2rem; }
+    .hero-photo img { width: 8.5rem; margin: 0 auto; }
+    .grid { grid-template-columns: 1fr; }
+    .nav-links { gap: .8rem; }
+    .nav-links .label { display: none; }
+    .nav-links svg { width: 16px; height: 16px; }
   }
 </style>
 </head>
 <body>
-  <div class="wrap">
 
-    <div class="hero">
-      <img class="avatar" src="/assets/profile.jpg" alt="Awais Ahmed" />
-      <div>
-        <h1>Awais Ahmed</h1>
-        <p class="tagline">AI Engineer — from prototype to production.</p>
-        <p class="location">Ingolstadt, Germany</p>
-        <nav class="links">
-          <a href="https://github.com/aawais-ai">GitHub</a>
-          <a href="https://www.linkedin.com/in/aawais-ai">LinkedIn</a>
-          <a href="mailto:awais@a-awais.com">Email</a>
-        </nav>
-      </div>
+  <nav class="container">
+    <a class="nav-name" href="/">Awais Ahmed</a>
+    <div class="nav-links">
+      <a href="#experience"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="7" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg><span class="label">experience</span></a>
+      <a href="#projects"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 16 4-4-4-4"/><path d="m6 8-4 4 4 4"/><path d="m14.5 4-5 16"/></svg><span class="label">projects</span></a>
+      <a href="#writing"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.376 3.622a1 1 0 0 1 3.002 3.002L7.368 18.635a2 2 0 0 1-.855.506l-2.872.838a.5.5 0 0 1-.62-.62l.838-2.872a2 2 0 0 1 .506-.854z"/></svg><span class="label">writing</span></a>
+      <a href="#contact"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg><span class="label">contact</span></a>
+      <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+        <span class="toggle-track">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          <span class="toggle-thumb"></span>
+        </span>
+      </button>
     </div>
+  </nav>
 
-    <p class="bio">
-      AI Engineer with 3+ years of experience taking Generative AI systems from prototype to
-      production — enterprise RAG platforms (~40% retrieval-accuracy gains), LLM fine-tuning
-      (QLoRA, 98% structured-output accuracy), and scalable FastAPI services on Terraform-managed
-      Azure/GCP infrastructure. Combines deep technical ownership with client-facing delivery:
-      pre-sales PoCs, demos, and solution architecture for enterprise customers. Google-certified
-      Professional Data Engineer, currently pursuing an M.Sc. in Artificial Intelligence;
-      experienced in GDPR- and EU AI Act-compliant deployments.
-    </p>
+  <main class="container">
 
-    <hr />
-
-    <h2>Experience &amp; Education</h2>
-    <div class="timeline">
-
-      <div class="node">
-        <span class="date">2026 – Present</span>
-        <span class="logo" style="--lc:#13a3a3"><span class="mono">N</span><img class="logo-img" alt="NFON AG" data-srcs="https://logo.clearbit.com/nfon.com|https://www.google.com/s2/favicons?domain=nfon.com&amp;sz=128" /></span>
-        <h3>AI Engineer · NFON AG</h3>
-        <p class="org-meta">Remote, Germany</p>
-        <p>
-          Building LLM-powered conversational-intelligence features — call-transcription
-          analysis, summarization, and real-time agent assist — for a European cloud-communications
-          platform. I design RAG and agentic workflows over product and customer-interaction data
-          with GDPR- and EU AI Act-compliant handling, and ship the Python/FastAPI inference
-          microservices behind them with containerized CI/CD and automated quality evaluation.
+    <section class="hero">
+      <div class="hero-text">
+        <h1>hey, I'm Awais</h1>
+        <p class="lede">
+          AI Engineer with 3+ years taking Generative AI systems from prototype to production —
+          enterprise <a href="#projects">RAG platforms</a>, LLM fine-tuning, and scalable FastAPI
+          services on Azure and GCP. Google-certified Professional Data Engineer, currently
+          pursuing an M.Sc. in Artificial Intelligence, and experienced in GDPR- and
+          EU&nbsp;AI&nbsp;Act-compliant deployments.
         </p>
+        <a class="btn" href="#contact">let's connect</a>
       </div>
-
-      <div class="node">
-        <span class="date">2026 – Present</span>
-        <span class="logo" style="--lc:#00467f"><span class="mono">T</span><img class="logo-img" alt="TH Ingolstadt" data-srcs="https://logo.clearbit.com/thi.de|https://www.google.com/s2/favicons?domain=thi.de&amp;sz=128" /></span>
-        <h3>M.Sc., Artificial Intelligence · TH Ingolstadt</h3>
-        <p class="org-meta">Alongside full-time work</p>
-        <p>Graduate study in AI, pursued part-time while working as an AI Engineer.</p>
+      <div class="hero-photo">
+        <img src="/assets/profile.jpg" alt="Awais Ahmed" />
+        <p>Ingolstadt, Germany</p>
       </div>
+    </section>
 
-      <div class="node">
-        <span class="date">2023 – 2026</span>
-        <span class="logo" style="--lc:#0a3d62"><span class="mono">S</span><img class="logo-img" alt="SII Technologies" data-srcs="https://logo.clearbit.com/sii-group.com|https://www.google.com/s2/favicons?domain=sii-group.com&amp;sz=128" /></span>
-        <h3>Data &amp; AI Engineer · SII Technologies</h3>
-        <p class="org-meta">Ingolstadt, Germany</p>
-        <p>
-          Architected and deployed an enterprise RAG platform on Terraform-provisioned Azure
-          (FastAPI, Azure AI Search, Docker), lifting retrieval accuracy ~40% with a multi-stage
-          pipeline of dense vector search plus cross-encoder reranking; fine-tuned Llama-3-8B
-          (QLoRA/Unsloth) to 98% valid-JSON extraction and quantized to GGUF for cost-efficient
-          self-hosted inference. I also built the FastAPI backend of an automotive recommendation
-          engine (NLP query parsing, VIN detection, live data enrichment) through to a client-facing
-          demo, delivered a Jira ticket-analytics solution (.NET + Power BI) and Tableau HR
-          dashboards, and drove technical pre-sales — scoping requirements, building proof-of-concepts,
-          and presenting architectures that converted prospects into signed projects.
-        </p>
-      </div>
+    <section id="experience">
+      <h2 class="section-label">Experience &amp; Education</h2>
+      <div class="stack">
 
-      <div class="node">
-        <span class="date">2020 – 2022</span>
-        <span class="logo" style="--lc:#2b6cb0"><span class="mono">e</span><img class="logo-img" alt="e.solutions GmbH" data-srcs="https://logo.clearbit.com/esolutions.de|https://www.google.com/s2/favicons?domain=esolutions.de&amp;sz=128" /></span>
-        <h3>Software Integration Engineer · e.solutions GmbH</h3>
-        <p class="org-meta">Ingolstadt, Germany</p>
-        <p>
-          Developed Python automation and Jenkins CI pipelines for automotive software releases,
-          cutting manual integration effort by 50% and streamlining OEM release cycles and
-          Artifactory artifact management.
-        </p>
-      </div>
-
-      <div class="node">
-        <span class="date">2019 – 2023</span>
-        <span class="logo" style="--lc:#00467f"><span class="mono">T</span><img class="logo-img" alt="TH Ingolstadt" data-srcs="https://logo.clearbit.com/thi.de|https://www.google.com/s2/favicons?domain=thi.de&amp;sz=128" /></span>
-        <h3>B.Eng., Engineering &amp; Management · TH Ingolstadt</h3>
-        <p class="org-meta">Grade 1.5 (German scale, 1.0 = best) · Focus: Data Science, AI Decision Systems</p>
-        <div class="thesis">
-          <b>B.Eng. thesis · AIMotion Bavaria (Oct 2022 – Feb 2023)</b><br />
-          Applied machine learning and clustering (K-means, Fuzzy c-means, Affinity Propagation) to
-          large-scale unlabelled vehicle-trajectory data from the rounD dataset — recorded at three
-          German roundabouts — to identify functional driving patterns for smart-infrastructure and
-          automated traffic. Found that a vehicle's spatial properties strongly predict its
-          roundabout exit, and that velocity profiles cluster tightly by exit, making velocity a
-          reliable predictor of future behaviour.
+        <div class="card hoverable">
+          <div class="xp-head">
+            <span class="xp-logo" style="--lc:#13a3a3">N<img alt="" data-srcs="https://logo.clearbit.com/nfon.com|https://www.google.com/s2/favicons?domain=nfon.com&amp;sz=128" /></span>
+            <div>
+              <div class="xp-title">AI Engineer · NFON AG</div>
+              <div class="xp-meta"><span>2026 – present</span><span>Remote, Germany</span></div>
+            </div>
+          </div>
+          <p>
+            Building LLM-powered conversational-intelligence features — call-transcription
+            analysis, summarization, and real-time agent assist — for a European
+            cloud-communications platform. I design RAG and agentic workflows over product and
+            customer-interaction data with GDPR- and EU AI Act-compliant handling, and ship the
+            Python/FastAPI inference microservices behind them with containerized CI/CD and
+            automated quality evaluation.
+          </p>
         </div>
+
+        <div class="card hoverable">
+          <div class="xp-head">
+            <span class="xp-logo" style="--lc:#00467f">T<img alt="" data-srcs="https://logo.clearbit.com/thi.de|https://www.google.com/s2/favicons?domain=thi.de&amp;sz=128" /></span>
+            <div>
+              <div class="xp-title">M.Sc., Artificial Intelligence · TH Ingolstadt</div>
+              <div class="xp-meta"><span>2026 – present</span><span>alongside full-time work</span></div>
+            </div>
+          </div>
+          <p>Graduate study in AI, pursued part-time while working as an AI Engineer.</p>
+        </div>
+
+        <div class="card hoverable">
+          <div class="xp-head">
+            <span class="xp-logo" style="--lc:#0a3d62">S<img alt="" data-srcs="https://logo.clearbit.com/sii-group.com|https://www.google.com/s2/favicons?domain=sii-group.com&amp;sz=128" /></span>
+            <div>
+              <div class="xp-title">Data &amp; AI Engineer · SII Technologies</div>
+              <div class="xp-meta"><span>2023 – 2026</span><span>Ingolstadt, Germany</span></div>
+            </div>
+          </div>
+          <p>
+            Architected and deployed an enterprise RAG platform on Terraform-provisioned Azure
+            (FastAPI, Azure AI Search, Docker), lifting retrieval accuracy <b>~40%</b> with a
+            multi-stage pipeline of dense vector search plus cross-encoder reranking; fine-tuned
+            Llama-3-8B (QLoRA/Unsloth) to <b>98% valid-JSON extraction</b> and quantized to GGUF
+            for cost-efficient self-hosted inference. Also built the FastAPI backend of an
+            automotive recommendation engine (NLP query parsing, VIN detection, live data
+            enrichment) through to a client-facing demo, delivered a Jira ticket-analytics
+            solution (.NET + Power BI) and Tableau HR dashboards, and drove technical pre-sales —
+            scoping requirements, building proof-of-concepts, and presenting architectures that
+            converted prospects into signed projects.
+          </p>
+        </div>
+
+        <div class="card hoverable">
+          <div class="xp-head">
+            <span class="xp-logo" style="--lc:#2b6cb0">e<img alt="" data-srcs="https://logo.clearbit.com/esolutions.de|https://www.google.com/s2/favicons?domain=esolutions.de&amp;sz=128" /></span>
+            <div>
+              <div class="xp-title">Software Integration Engineer · e.solutions GmbH</div>
+              <div class="xp-meta"><span>2020 – 2022</span><span>Ingolstadt, Germany</span></div>
+            </div>
+          </div>
+          <p>
+            Developed Python automation and Jenkins CI pipelines for automotive software releases,
+            cutting manual integration effort by <b>50%</b> and streamlining OEM release cycles
+            and Artifactory artifact management.
+          </p>
+        </div>
+
+        <div class="card hoverable">
+          <div class="xp-head">
+            <span class="xp-logo" style="--lc:#00467f">T<img alt="" data-srcs="https://logo.clearbit.com/thi.de|https://www.google.com/s2/favicons?domain=thi.de&amp;sz=128" /></span>
+            <div>
+              <div class="xp-title">B.Eng., Engineering &amp; Management · TH Ingolstadt</div>
+              <div class="xp-meta"><span>2019 – 2023</span><span>grade 1.5 · focus: Data Science, AI Decision Systems</span></div>
+            </div>
+          </div>
+          <div class="thesis">
+            <b>B.Eng. thesis · AIMotion Bavaria (Oct 2022 – Feb 2023)</b><br />
+            Applied machine learning and clustering (K-means, Fuzzy c-means, Affinity Propagation)
+            to large-scale unlabelled vehicle-trajectory data from the rounD dataset — recorded at
+            three German roundabouts — to identify functional driving patterns for
+            smart-infrastructure and automated traffic. Found that a vehicle's spatial properties
+            strongly predict its roundabout exit, and that velocity profiles cluster tightly by
+            exit, making velocity a reliable predictor of future behaviour.
+          </div>
+        </div>
+
       </div>
+    </section>
 
-    </div>
+    <section id="projects">
+      <h2 class="section-label">Projects</h2>
+      <div class="grid">
 
-    <hr />
+        <a class="card proj" href="https://github.com/aawais-ai" target="_blank" rel="noopener">
+          <h3>Enterprise RAG Platform <span class="arrow">↗</span></h3>
+          <div class="when">2023 – 2026</div>
+          <p>
+            Production RAG platform on Terraform-provisioned Azure. Dense vector search over
+            Azure AI Search plus cross-encoder reranking lifted retrieval accuracy ~40% over a
+            naive top-k baseline, served through FastAPI microservices with GDPR-compliant data
+            handling.
+          </p>
+          <div class="tags"><span>RAG</span><span>Azure AI Search</span><span>reranking</span><span>FastAPI</span><span>Terraform</span></div>
+        </a>
 
-    <h2>Projects</h2>
+        <a class="card proj" href="https://github.com/aawais-ai/sales-research-agent" target="_blank" rel="noopener">
+          <h3>sales-research-agent <span class="arrow">↗</span></h3>
+          <div class="when">2026</div>
+          <p>
+            Provider-agnostic sales-research agent with a custom MCP server over a mock CRM.
+            Researches firmographics, detects buying signals, finds decision-makers, and drafts
+            outreach — with a code-enforced guardrail that every fact traces back to a real tool
+            result. Claude and OpenAI swap behind one protocol.
+          </p>
+          <div class="tags"><span>Python</span><span>MCP</span><span>tool use</span><span>mypy --strict</span><span>95% coverage</span></div>
+        </a>
 
-    <div class="entry">
-      <div class="entry-head">
-        <p class="entry-title"><a href="https://github.com/aawais-ai">Enterprise RAG Platform</a></p>
-        <span class="entry-meta">2023–2026</span>
+        <a class="card proj" href="https://github.com/aawais-ai/GithubRepoAssistant" target="_blank" rel="noopener">
+          <h3>GithubRepoAssistant <span class="arrow">↗</span></h3>
+          <div class="when">2026</div>
+          <p>
+            LLM-powered assistant that answers natural-language questions about any public GitHub
+            repository. Built on Pydantic AI with ten focused tools over the GitHub REST API that
+            the model chains automatically to answer questions like "which open issues look
+            stale?"
+          </p>
+          <div class="tags"><span>Python</span><span>Pydantic AI</span><span>GitHub API</span><span>async</span></div>
+        </a>
+
+        <div class="card proj">
+          <h3>Certifications</h3>
+          <div class="line-list" style="margin-top:.7rem">
+            <div class="line-item"><span class="yr">2025</span><span>Google Cloud — Professional Data Engineer</span></div>
+            <div class="line-item"><span class="yr">2025</span><span>NVIDIA Certified Associate — Generative AI &amp; LLMs</span></div>
+          </div>
+        </div>
+
       </div>
-      <p class="entry-desc">
-        Production retrieval-augmented-generation platform on Terraform-provisioned Azure. A
-        multi-stage pipeline — dense vector search over Azure AI Search followed by cross-encoder
-        reranking — lifted retrieval accuracy ~40% over a naive top-k baseline, served through
-        FastAPI microservices with GDPR-compliant data handling.
-      </p>
-      <p class="tags"><span>RAG</span><span>Azure AI Search</span><span>cross-encoder reranking</span><span>FastAPI</span><span>Terraform</span></p>
-    </div>
+    </section>
 
-    <div class="entry">
-      <div class="entry-head">
-        <p class="entry-title"><a href="https://github.com/aawais-ai/sales-research-agent">sales-research-agent</a></p>
-        <span class="entry-meta">2026</span>
+    <section id="writing">
+      <h2 class="section-label">Writing</h2>
+      <div class="line-list">
+        <div class="line-item"><span class="soon">Notes on LLM systems, retrieval, and putting models into production — first post in progress.</span></div>
       </div>
-      <p class="entry-desc">
-        A provider-agnostic sales-research agent with a custom MCP server over a mock CRM. Give it a
-        target account and it researches firmographics, detects buying signals, finds the right
-        decision-maker, and produces a structured brief plus a personalized outreach draft — with a
-        code-enforced guardrail that every fact must trace back to a real tool result. Claude and
-        OpenAI implementations swap behind one protocol.
-      </p>
-      <p class="tags"><span>Python</span><span>MCP</span><span>Claude / OpenAI tool use</span><span>mypy --strict</span><span>95% coverage</span></p>
-    </div>
+    </section>
 
-    <div class="entry">
-      <div class="entry-head">
-        <p class="entry-title"><a href="https://github.com/aawais-ai/GithubRepoAssistant">GithubRepoAssistant</a></p>
-        <span class="entry-meta">2026</span>
+    <section id="contact">
+      <h2 class="section-label">Contact</h2>
+      <div class="contact-row">
+        <a class="card" href="#" data-contact>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+          <span data-contact-label>email me</span>
+        </a>
+        <a class="card" href="https://github.com/aawais-ai" target="_blank" rel="noopener">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+          <span>GitHub</span>
+        </a>
+        <a class="card" href="https://www.linkedin.com/in/aawais-ai" target="_blank" rel="noopener">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
+          <span>LinkedIn</span>
+        </a>
       </div>
-      <p class="entry-desc">
-        An LLM-powered assistant that answers natural-language questions about any public GitHub
-        repository. Built on Pydantic AI with ten focused tools over the GitHub REST API — repo
-        overview, issues, PRs, commits, contributors, README context, and a deterministic
-        repo-health snapshot — that the model chains automatically to answer questions like
-        "which open issues look stale?"
-      </p>
-      <p class="tags"><span>Python</span><span>Pydantic AI</span><span>GitHub API</span><span>async</span><span>tool use</span></p>
-    </div>
+    </section>
 
-    <hr />
+  </main>
 
-    <h2>Certifications</h2>
-    <div class="cert"><span class="yr">2025</span><span>Google Cloud — Professional Data Engineer</span></div>
-    <div class="cert"><span class="yr">2025</span><span>NVIDIA Certified Associate — Generative AI &amp; LLMs (NCA-GENL)</span></div>
-
-    <hr />
-
-    <h2>Writing</h2>
-    <p class="muted">Notes on LLM systems, retrieval, and putting models into production.</p>
-    <p class="soon">First post in progress.</p>
-
-    <footer>
-      <span>© 2026 Awais Ahmed</span>
-      <span>awais@a-awais.com</span>
-    </footer>
-  </div>
+  <footer class="container">
+    <span>© 2026 Awais Ahmed</span>
+    <a href="#" data-contact data-contact-label>reveal email</a>
+  </footer>
 
   <script>
-    document.querySelectorAll('.logo-img').forEach(function (img) {
+    // theme toggle
+    document.getElementById('theme-toggle').addEventListener('click', function () {
+      var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      try { localStorage.setItem('theme', next); } catch (e) {}
+    });
+
+    // email is never present in the HTML source — assembled here so
+    // address-harvesting crawlers scraping the static page find nothing.
+    (function () {
+      var p = ['moc.', 'siawa-a', '@', 'siawa'];
+      var addr = p.map(function (s) { return s.split('').reverse().join(''); }).reverse().join('');
+      document.querySelectorAll('[data-contact]').forEach(function (el) {
+        var revealed = false;
+        el.addEventListener('click', function (ev) {
+          el.href = 'mailto:' + addr;
+          var label = el.hasAttribute('data-contact-label') ? el : el.querySelector('[data-contact-label]');
+          if (label && !revealed) { label.textContent = addr; revealed = true; ev.preventDefault(); }
+        });
+      });
+    })();
+
+    // company logos with graceful fallback to the initial letter
+    document.querySelectorAll('.xp-logo img').forEach(function (img) {
       var srcs = (img.getAttribute('data-srcs') || '').split('|').filter(Boolean);
       var i = 0;
-      function next() {
-        if (i >= srcs.length) { img.remove(); return; }
-        img.src = srcs[i++];
-      }
-      img.addEventListener('load', function () {
-        img.style.opacity = 1;
-        img.parentElement.classList.add('has-img');
-      });
+      function next() { if (i >= srcs.length) { img.remove(); return; } img.src = srcs[i++]; }
+      img.addEventListener('load', function () { img.style.opacity = 1; });
       img.addEventListener('error', next);
       next();
     });

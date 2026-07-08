@@ -1,26 +1,36 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Not found — Awais Ahmed</title>
+<script>
+  (function () {
+    var saved = null;
+    try { saved = localStorage.getItem('theme'); } catch (e) {}
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.setAttribute('data-theme', theme);
+  })();
+</script>
 <style>
-  :root { --bg:#fbfbf9; --fg:#1a1a18; --muted:#6b6b66; --accent:#9a4b2f; }
-  @media (prefers-color-scheme: dark){ :root{ --bg:#15140f; --fg:#e9e7e0; --muted:#9c998f; --accent:#d98a63; } }
-  body{ margin:0; background:var(--bg); color:var(--fg);
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  :root, [data-theme="dark"] { --bg:#0a0a0a; --text:#e5e5e5; --muted:#888; --border:#222; --bg-hover:#1a1a1a; }
+  [data-theme="light"] { --bg:#fafafa; --text:#171717; --muted:#666; --border:#e4e4e4; --bg-hover:#f2f2f2; }
+  body { margin:0; background:var(--bg); color:var(--text);
+    font-family:"Inter",system-ui,-apple-system,sans-serif;
     min-height:100vh; display:flex; align-items:center; justify-content:center; text-align:center; }
-  .box{ padding:24px; }
-  h1{ font-family:Georgia,serif; font-weight:500; font-size:64px; margin:0; }
-  p{ color:var(--muted); margin:8px 0 20px; }
-  a{ color:var(--accent); text-decoration:none; } a:hover{ text-decoration:underline; }
+  .box { padding:24px; }
+  h1 { font-weight:700; font-size:56px; letter-spacing:-0.03em; margin:0; }
+  p { color:var(--muted); margin:8px 0 24px; font-size:15px; }
+  a { color:var(--text); text-decoration:none; font-size:14px;
+    border:1px solid var(--border); border-radius:6px; padding:8px 18px; transition:background .15s; }
+  a:hover { background:var(--bg-hover); }
 </style>
 </head>
 <body>
   <div class="box">
     <h1>404</h1>
     <p>That page wandered off.</p>
-    <a href="/">← Back home</a>
+    <a href="/">← back home</a>
   </div>
 </body>
 </html>
