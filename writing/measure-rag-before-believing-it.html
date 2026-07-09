@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>I measured my RAG system before believing it — Awais Ahmed</title>
-<meta name="description" content="Building spanscore, an open-source eval harness that scores RAG pipelines and agents from OpenTelemetry traces — and what actually happened when I put numbers behind a claim I'd been making from memory." />
+<meta name="description" content="Building spanscore, an open-source eval harness that scores RAG pipelines and agents from OpenTelemetry traces — and what a retrieval upgrade actually buys when you measure it properly." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -51,22 +51,21 @@
     <h1>I measured my RAG system before believing it</h1>
     <p class="date">July 2026 · 12 min read</p>
 
-    <p>Until this week, my site claimed a <b>~40% retrieval improvement</b> from reranking.
-    It's the kind of number that gets estimated mid-project because the upgrade <i>felt</i>
-    that big, survives into a resume bullet, and then gets repeated for a year. When I finally
-    went looking for the eval behind it, I had to admit the uncomfortable truth: there wasn't
-    one to rerun. The production system lives in a client's Azure tenant, and the number was
-    an impression, not a measurement. That bothered me more the longer I worked with LLM
-    systems, because the pattern is everywhere: <b>numbers that started as gut feel hardening
-    into facts nobody can trace.</b></p>
+    <p>The eval suite for my RAG project was 10 queries over 5 documents, and it reported a
+    perfect <b>recall@5 of 1.00</b>. Not because retrieval was perfect — because with five
+    documents and top-5 retrieval, <b>the system literally cannot miss</b>. Every number that
+    eval ever produced was a compliment, not a measurement. And I don't think my setup was
+    unusual: most RAG pipelines I've seen are evaluated by a demo that looked right, a smoke
+    test that saturated months ago, and everyone's memory of both.</p>
 
-    <p>So I did the only honest thing available: I built the measurement infrastructure I wish
-    I'd had, made it open source, and ran the experiment I should have run back then — naive
-    retrieval versus a properly engineered pipeline — under conditions anyone can reproduce.
-    The result is <a href="https://github.com/aawais-ai/spanscore">spanscore</a>, an evaluation
-    harness that scores RAG pipelines and agents from their OpenTelemetry traces, and this
-    post: what the numbers actually said. Spoiler: the improvement is real, and it is nothing
-    like a single "~40%".</p>
+    <p>I wanted to know what my retrieval upgrades were actually worth — chunking strategy,
+    hybrid search, reranking — with numbers I could defend and rerun. So I built the
+    measurement infrastructure first and made it open source:
+    <a href="https://github.com/aawais-ai/spanscore">spanscore</a>, an evaluation harness that
+    scores RAG pipelines and agents from their OpenTelemetry traces. Then I ran the experiment:
+    naive retrieval versus a properly engineered pipeline, under conditions anyone can
+    reproduce. The improvement turned out to be real — and it looked nothing like I expected,
+    or like any single number could describe.</p>
 
     <h2>Why eyeballing fails</h2>
 
@@ -90,12 +89,13 @@
 
     <h2>Building a gold set I could defend</h2>
 
-    <p>My original eval was 10 queries over 5 documents. With 5 documents and top-5 retrieval,
-    recall@5 is 1.0 <i>by construction</i> — the system literally cannot miss. Every number I
-    had ever produced on that set was a compliment, not a measurement. This is embarrassingly
-    common: eval sets sized for a smoke test quietly become the thing a team quotes.</p>
+    <p>A saturated eval set is worse than none, because it keeps emitting reassuring numbers.
+    The fix is not more queries over the same tiny corpus — it's a corpus large and confusable
+    enough that a retriever can actually be wrong, and gold cases precise enough to catch the
+    chunk-boundary failure above. Eval sets sized for a smoke test quietly become the thing a
+    team quotes; this one is sized to discriminate.</p>
 
-    <p>The new benchmark is deliberately built to be confusable: <b>16 insurance policy
+    <p>The benchmark is deliberately built to be confusable: <b>16 insurance policy
     documents, 60 cases</b>, with near-collisions everywhere — four different deductibles
     (150, 300, 500, 1000 EUR) attached to different products, five different "within X days"
     periods, competing 5-percent discounts. Each case has the query, the relevant documents,
@@ -153,11 +153,11 @@
       +15.8 points, the largest and most significant delta on the board. Heading-aware chunking
       stopped slicing facts in half. That single change propagated downstream into +6.4
       faithfulness and +7.9 answer correctness — the metrics a user actually feels.</li>
-      <li><b>A "~40%" style single number was never going to describe this.</b> The honest
-      summary is a vector: ranking barely changed, answerability changed a lot. And when you
-      don't measure at all, the single number you reach for will be the flattering one —
-      mine was. The largest genuine relative improvement on this board is ~19%, on a metric
-      I didn't even have a name for back then.</li>
+      <li><b>No single number describes this upgrade.</b> The honest summary is a vector:
+      ranking barely changed, answerability changed a lot. The largest genuine relative
+      improvement on the board is ~19% — on a metric I didn't have a name for before building
+      the harness. If I had to compress this to one "retrieval improved by X%" soundbite,
+      whichever metric I picked would misrepresent the other six.</li>
     </ul>
 
     <h2>Your LLM judge is a measurement instrument. Calibrate it.</h2>
