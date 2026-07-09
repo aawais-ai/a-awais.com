@@ -51,16 +51,17 @@
     <h1>I measured my RAG system before believing it</h1>
     <p class="date">July 2026 · 12 min read</p>
 
-    <p>My site claims a <b>~40% retrieval improvement</b> from reranking. It's the kind of number
-    that comes out of a real project, survives in a resume bullet, and then gets repeated for a
-    year without anyone — including me — being able to rerun the experiment behind it. The
-    production system lives in a client's Azure tenant; the eval that produced the number is
-    gone. That bothered me more the longer I worked with LLM systems, because I kept watching
-    the same pattern everywhere: <b>teams that measure their models obsessively during a project
-    and can't reproduce a single number six months later.</b></p>
+    <p>Until this week, my site claimed a <b>~40% retrieval improvement</b> from reranking.
+    It's the kind of number that gets estimated mid-project because the upgrade <i>felt</i>
+    that big, survives into a resume bullet, and then gets repeated for a year. When I finally
+    went looking for the eval behind it, I had to admit the uncomfortable truth: there wasn't
+    one to rerun. The production system lives in a client's Azure tenant, and the number was
+    an impression, not a measurement. That bothered me more the longer I worked with LLM
+    systems, because the pattern is everywhere: <b>numbers that started as gut feel hardening
+    into facts nobody can trace.</b></p>
 
     <p>So I did the only honest thing available: I built the measurement infrastructure I wish
-    I'd had, made it open source, and re-ran the experiment shape I'd been citing — naive
+    I'd had, made it open source, and ran the experiment I should have run back then — naive
     retrieval versus a properly engineered pipeline — under conditions anyone can reproduce.
     The result is <a href="https://github.com/aawais-ai/spanscore">spanscore</a>, an evaluation
     harness that scores RAG pipelines and agents from their OpenTelemetry traces, and this
@@ -153,9 +154,10 @@
       stopped slicing facts in half. That single change propagated downstream into +6.4
       faithfulness and +7.9 answer correctness — the metrics a user actually feels.</li>
       <li><b>A "~40%" style single number was never going to describe this.</b> The honest
-      summary is a vector: ranking barely changed, answerability changed a lot. Which one you
-      quote depends on which one you measured — and if you only kept one number, you probably
-      kept the flattering one. I did.</li>
+      summary is a vector: ranking barely changed, answerability changed a lot. And when you
+      don't measure at all, the single number you reach for will be the flattering one —
+      mine was. The largest genuine relative improvement on this board is ~19%, on a metric
+      I didn't even have a name for back then.</li>
     </ul>
 
     <h2>Your LLM judge is a measurement instrument. Calibrate it.</h2>
