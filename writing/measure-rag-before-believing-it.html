@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>I measured my RAG system before believing it — Awais Ahmed</title>
+<meta name="description" content="Building spanscore, an open-source eval harness that scores RAG pipelines and agents from OpenTelemetry traces — and what actually happened when I put numbers behind a claim I'd been making from memory." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<script>
+  (function () {
+    var saved = null;
+    try { saved = localStorage.getItem('theme'); } catch (e) {}
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.setAttribute('data-theme', theme);
+  })();
+</script>
+<style>
+  :root, [data-theme="dark"] { --bg:#0a0a0a; --bg-card:#141414; --text:#e5e5e5; --muted:#888; --dim:#555; --border:#222; --good:#4ade80; --bad:#f87171; }
+  [data-theme="light"] { --bg:#fafafa; --bg-card:#fff; --text:#171717; --muted:#666; --dim:#a0a0a0; --border:#e4e4e4; --good:#16a34a; --bad:#dc2626; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text);
+    font-family:"Inter",system-ui,-apple-system,sans-serif;
+    font-size:16px; line-height:1.75; -webkit-font-smoothing:antialiased; }
+  .wrap { max-width:42rem; margin:0 auto; padding:56px 24px 96px; }
+  a { color:var(--text); text-decoration:underline; text-underline-offset:3px; }
+  .back { font-size:14px; color:var(--muted); text-decoration:none; display:inline-block; margin-bottom:44px; }
+  .back:hover { color:var(--text); }
+  h1 { font-weight:700; font-size:30px; line-height:1.25; margin:0 0 8px; letter-spacing:-0.02em; }
+  .date { font-size:13px; color:var(--dim); margin:0 0 44px; }
+  h2 { font-weight:600; font-size:20px; margin:40px 0 12px; letter-spacing:-0.01em; }
+  p { margin:0 0 20px; color:var(--muted); }
+  p b, p strong, li b { color:var(--text); font-weight:600; }
+  ul { color:var(--muted); margin:0 0 20px; padding-left:22px; }
+  li { margin-bottom:6px; }
+  blockquote { margin:24px 0; padding-left:18px; border-left:2px solid var(--border); color:var(--muted); font-style:italic; }
+  pre { background:var(--bg-card); border:1px solid var(--border); padding:16px; border-radius:8px; overflow:auto; font-size:13px; line-height:1.55; color:var(--muted); }
+  code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:0.9em; }
+  table { width:100%; border-collapse:collapse; font-size:13.5px; margin:0 0 20px; }
+  th, td { text-align:left; padding:7px 10px; border-bottom:1px solid var(--border); color:var(--muted); }
+  th { color:var(--dim); font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.05em; }
+  td.n { font-family:ui-monospace,Menlo,monospace; white-space:nowrap; }
+  .up { color:var(--good); } .down { color:var(--bad); }
+  .note { font-size:13.5px; color:var(--dim); }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <a class="back" href="/">← Awais Ahmed</a>
+    <h1>I measured my RAG system before believing it</h1>
+    <p class="date">July 2026 · 12 min read</p>
+
+    <p>My site claims a <b>~40% retrieval improvement</b> from reranking. It's the kind of number
+    that comes out of a real project, survives in a resume bullet, and then gets repeated for a
+    year without anyone — including me — being able to rerun the experiment behind it. The
+    production system lives in a client's Azure tenant; the eval that produced the number is
+    gone. That bothered me more the longer I worked with LLM systems, because I kept watching
+    the same pattern everywhere: <b>teams that measure their models obsessively during a project
+    and can't reproduce a single number six months later.</b></p>
+
+    <p>So I did the only honest thing available: I built the measurement infrastructure I wish
+    I'd had, made it open source, and re-ran the experiment shape I'd been citing — naive
+    retrieval versus a properly engineered pipeline — under conditions anyone can reproduce.
+    The result is <a href="https://github.com/aawais-ai/spanscore">spanscore</a>, an evaluation
+    harness that scores RAG pipelines and agents from their OpenTelemetry traces, and this
+    post: what the numbers actually said. Spoiler: the improvement is real, and it is nothing
+    like a single "~40%".</p>
+
+    <h2>Why eyeballing fails</h2>
+
+    <p>Here's a concrete failure that never shows up when you spot-check a demo. One of my test
+    queries asks: <i>"What is the deductible on the premium tier of the home policy?"</i> The
+    correct answer — 150 EUR — sits in a coverage document, two lines below the other tiers.
+    The baseline pipeline chunks documents into fixed 280-character windows, and the window
+    boundary happened to fall between "the plus tier has a 300 EUR deductible" and the premium
+    tier's line. The model answered:</p>
+
+    <blockquote>"The deductible on the premium tier is not specified in the provided context.
+    However, the plus tier has a 300 EUR deductible, and the basic tier has 500 EUR."</blockquote>
+
+    <p>That answer looks <i>great</i> in a demo. It's grounded, it cites its source, it
+    helpfully offers adjacent facts, and it's useless — the one number the user asked for was
+    sliced off by a chunker. Retrieval "worked" (the right document came back), generation
+    "worked" (nothing hallucinated), and the system still failed. You will not catch this class
+    of bug by eyeballing, because every component looks locally correct. You catch it with a
+    metric that checks whether the <b>gold fact</b> made it into the retrieved context — and
+    that requires a gold set.</p>
+
+    <h2>Building a gold set I could defend</h2>
+
+    <p>My original eval was 10 queries over 5 documents. With 5 documents and top-5 retrieval,
+    recall@5 is 1.0 <i>by construction</i> — the system literally cannot miss. Every number I
+    had ever produced on that set was a compliment, not a measurement. This is embarrassingly
+    common: eval sets sized for a smoke test quietly become the thing a team quotes.</p>
+
+    <p>The new benchmark is deliberately built to be confusable: <b>16 insurance policy
+    documents, 60 cases</b>, with near-collisions everywhere — four different deductibles
+    (150, 300, 500, 1000 EUR) attached to different products, five different "within X days"
+    periods, competing 5-percent discounts. Each case has the query, the relevant documents,
+    a reference answer, and one or more <b>gold facts</b>: literal spans that must appear in
+    the retrieved context for the case to be answerable. Two things I'd insist on in any gold
+    set after this:</p>
+
+    <ul>
+      <li><b>Grounding is checked by a script, not by discipline.</b> A case only enters
+      <code>gold.jsonl</code> if its gold facts are verbatim substrings of its source documents.
+      Synthetic case generation drifts — the generator paraphrases, and suddenly your
+      "sufficiency" metric measures paraphrase luck instead of chunking quality.</li>
+      <li><b>Disclose what the corpus is.</b> Mine is a constructed benchmark written for this
+      experiment, not a dump of the production corpus (which I couldn't publish anyway). What
+      transfers is the methodology and the harness; your absolute numbers will differ.</li>
+    </ul>
+
+    <h2>The experiment: v1 vs v2</h2>
+
+    <p>Both pipelines run end-to-end and emit OpenTelemetry-style spans — a retrieval span with
+    the ranked documents, an LLM span with the generated answer and token usage. spanscore
+    scores the <i>traces</i>, not the code: the harness never imports the pipeline.</p>
+
+    <ul>
+      <li><b>v1 (baseline):</b> fixed-size 280-character chunks + BM25 — the shape of most
+      first RAG implementations.</li>
+      <li><b>v2:</b> heading-aware chunking (one chunk per document section, title kept as
+      context) + hybrid retrieval: BM25 and <code>text-embedding-3-small</code> fused with
+      reciprocal rank fusion. Generation is <code>gpt-4o-mini</code> for both, temperature 0,
+      answer-from-context-only with citations.</li>
+    </ul>
+
+    <p>Every judge-backed metric below is a mean with a 95% bootstrap confidence interval —
+    never a bare number. 60 cases each, identical for both systems:</p>
+
+    <table>
+      <tr><th>metric</th><th>v1 naive+BM25</th><th>v2 heading+hybrid</th><th>Δ (95% CI, paired)</th></tr>
+      <tr><td>recall@1</td><td class="n">0.850</td><td class="n">0.875</td><td class="n">+0.025 [+0.000, +0.067]</td></tr>
+      <tr><td>recall@3</td><td class="n">0.933</td><td class="n">1.000</td><td class="n up">+0.067 [+0.017, +0.133]</td></tr>
+      <tr><td>MRR</td><td class="n">0.921</td><td class="n">0.956</td><td class="n up">+0.035 [+0.008, +0.068]</td></tr>
+      <tr><td>context sufficiency</td><td class="n">0.842</td><td class="n">1.000</td><td class="n up">+0.158 [+0.075, +0.258]</td></tr>
+      <tr><td>faithfulness (judge)</td><td class="n">0.919</td><td class="n">0.983</td><td class="n up">+0.064 [+0.017, +0.131]</td></tr>
+      <tr><td>answer correctness (judge)</td><td class="n">0.908</td><td class="n">0.988</td><td class="n up">+0.079 [+0.021, +0.150]</td></tr>
+      <tr><td>citation coverage</td><td class="n">0.850</td><td class="n">0.931</td><td class="n up">+0.081 [+0.003, +0.167]</td></tr>
+    </table>
+
+    <p>Three things I would not have said out loud before measuring:</p>
+
+    <ul>
+      <li><b>The headline retrieval metric barely moved.</b> Recall@1 improved by 2.5 points and
+      the confidence interval touches zero — on this benchmark I cannot claim v2 finds the right
+      document first any more often than v1 does. If I had only looked at recall, I'd have
+      called the upgrade a wash.</li>
+      <li><b>The real win was never "retrieval accuracy".</b> It was <i>context sufficiency</i>:
+      +15.8 points, the largest and most significant delta on the board. Heading-aware chunking
+      stopped slicing facts in half. That single change propagated downstream into +6.4
+      faithfulness and +7.9 answer correctness — the metrics a user actually feels.</li>
+      <li><b>A "~40%" style single number was never going to describe this.</b> The honest
+      summary is a vector: ranking barely changed, answerability changed a lot. Which one you
+      quote depends on which one you measured — and if you only kept one number, you probably
+      kept the flattering one. I did.</li>
+    </ul>
+
+    <h2>Your LLM judge is a measurement instrument. Calibrate it.</h2>
+
+    <p>Two of those metrics come from an LLM judge (gpt-4o-mini scoring answers on an anchored
+    1–5 rubric). Judges are everywhere now; <b>judge calibration</b> is almost nowhere. If a
+    human wouldn't agree with the judge, the metric is theater. So I labelled all 60 baseline
+    answers by hand against the same rubric the judge sees, and spanscore's
+    <code>calibrate</code> command compared us:</p>
+
+<pre>$ spanscore calibrate results-v1.json labels-v1.csv
+n=60 labelled cases, levels=[1, 2, 3, 4, 5]
+weighted kappa (quadratic): 0.954
+kendall tau-b: 0.890
+exact agreement: 91.7%
+mean bias (judge - human): -0.017</pre>
+
+    <p>Quadratic-weighted Cohen's κ of 0.95 is high — the judge is usable for this rubric on
+    this domain. But <i>exact</i> agreement is only 91.7%, and the confusion matrix showed the
+    disagreements aren't random noise; they're two systematic habits:</p>
+
+    <ul>
+      <li><b>The judge is harsh on honest refusals.</b> Every answer of the form "the context
+      doesn't contain this" got a 1 ("does not address the question") where the rubric says 2
+      ("unanswered"). An honest refusal and a hallucination scored identically — which is
+      exactly the behaviour you don't want to optimize your pipeline against.</li>
+      <li><b>The judge is lenient about omissions.</b> Answers that addressed the question but
+      dropped a fact from the reference kept getting 5s where the rubric says 4. And in one
+      rationale the judge confidently called two correct figures "incorrect information" while
+      scoring — right verdict, wrong reasoning. It reads convincingly either way; that's the
+      trap.</li>
+    </ul>
+
+    <p>Neither pattern flips this experiment's conclusion — the biases are small and symmetric
+    across both systems. But I only know that <i>because I measured it</i>, and now there's a
+    number that says how much to trust the judge column. One design decision I'd defend hard:
+    spanscore <b>refuses to report κ on fewer than 30 labels</b>. Agreement statistics on a
+    handful of examples are noise wearing a lab coat; better no number than a false one.</p>
+
+    <h2>Gating CI on evals without the gate crying wolf</h2>
+
+    <p>A harness you run by hand is a harness you'll stop running, so the point of all this is
+    a CI gate. The naive version — "fail if any metric dropped" — flaps constantly on judge
+    variance and small samples, and a gate that flaps trains everyone to ignore it. spanscore's
+    gate blocks only when a regression is <b>statistically significant</b> (a paired bootstrap
+    over cases, so per-case correlation is preserved) <b>and practically large</b> (beyond a
+    per-metric threshold you set in <code>gate.toml</code>). Noise warns; only real damage
+    blocks. Running the gate "backwards" — v1 as a candidate against v2 as baseline, i.e.
+    pretending someone shipped the downgrade — it blocks with exit code 1:</p>
+
+<pre>$ spanscore gate results-v1.json --baseline results-v2.json --config gate.toml
+recall@3              block   -0.0667  [-0.1333, -0.0167]
+context_sufficiency   block   -0.1583  [-0.2583, -0.0750]
+answer_correctness    block   -0.0792  [-0.1500, -0.0208]
+recall@1              pass    -0.0250  [-0.0667, +0.0000]   ← not significant
+exit code 1</pre>
+
+    <p>Note recall@1 correctly <i>passing</i> in both directions: the gate knows the difference
+    between "worse" and "indistinguishable", which is precisely what keeps it credible. The
+    traces and the judge cache are committed to the repo, so CI re-scores everything with
+    <b>no API key</b> — a cold run of the whole experiment costs about $0.05; a warm run
+    costs nothing.</p>
+
+    <h2>What I'd cut with hindsight</h2>
+
+    <p>The pipeline comparison was a day. The measurement infrastructure was the project. If I
+    were starting again I'd skip the temptation to build evaluators for everything and start
+    with exactly three: recall@k, context sufficiency, and one calibrated judge metric — that
+    combination caught every real defect described here. I'd also write the gold-set grounding
+    check <i>first</i>; it rejected several of my own hand-written cases for paraphrasing the
+    corpus.</p>
+
+    <p>Everything here is reproducible from the repo:
+    <a href="https://github.com/aawais-ai/spanscore">github.com/aawais-ai/spanscore</a> — the
+    harness (MIT, framework-agnostic, scores any OTel GenAI traces), the 60-case gold set, the
+    committed traces, my hand labels, and the
+    <a href="/writing/spanscore-report.html">full interactive report</a> this post's numbers
+    come from. If you have a RAG pipeline you've been describing with an adjective — or a
+    number you can no longer reproduce — <code>pip install spanscore</code> and
+    <code>spanscore init</code> is the fastest way I know to find out what's actually true.</p>
+
+    <p class="note">Next post: the same treatment for agent <i>trajectories</i> — scoring tool
+    selection, argument correctness, and loop detection from OpenTelemetry spans, dogfooded on
+    my sales-research-agent.</p>
+  </div>
+</body>
+</html>
